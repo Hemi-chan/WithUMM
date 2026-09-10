@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <AssemblySearchPaths>{HintPathFromItem};{TargetFrameworkDirectory};{RawFileName}</AssemblySearchPaths>
+    <AssemblyName>WithUMM</AssemblyName>
+    <RootNamespace>WithUMM</RootNamespace>
+    <Version>0.1.0</Version>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <Deterministic>true</Deterministic>
+    <DebugType>portable</DebugType>
+    <GamePath Condition="'$(GamePath)' == ''">$(WITHUMM_GAME_PATH)</GamePath>
+    <MelonLoaderPath Condition="'$(MelonLoaderPath)' == ''">$(GamePath)\MelonLoader\net35</MelonLoaderPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="src/**/*.cs" />
+    <EmbeddedResource Include="artifacts/harmony/0Harmony.dll" LogicalName="WithUMM.Harmony236.Core133.dll" />
+    <EmbeddedResource Include="licenses/*.txt" LogicalName="WithUMM.Licenses.%(Filename)%(Extension)" />
+    <Reference Include="MelonLoader"><HintPath>$(MelonLoaderPath)\MelonLoader.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony, Version=2.10.2.0, Culture=neutral, PublicKeyToken=null"><HintPath>$(MelonLoaderPath)\0Harmony.dll</HintPath><SpecificVersion>true</SpecificVersion><Private>false</Private></Reference>
+    <Reference Include="Mono.Cecil"><HintPath>$(MelonLoaderPath)\Mono.Cecil.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="MonoMod.Utils"><HintPath>$(MelonLoaderPath)\MonoMod.Utils.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="MonoMod.RuntimeDetour"><HintPath>$(MelonLoaderPath)\MonoMod.RuntimeDetour.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+  <Target Name="CheckLoaderReferences" BeforeTargets="ResolveReferences">
+    <Error Condition="!Exists('$(MelonLoaderPath)\MelonLoader.dll')" Text="MelonLoader.dll not found. Supply -p:MelonLoaderPath=.../MelonLoader/net35." />
+    <Error Condition="!Exists('artifacts/harmony/0Harmony.dll')" Text="Build the pinned Harmony provider first: ./build.ps1 -MelonLoaderPath .../MelonLoader/net35" />
+  </Target>
+</Project>
